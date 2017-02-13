@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="post">
+	<select id="selectMyActiveList" resultType="map">
+		select b.b_no, b_name, count(post_count) as post_count, sum(reply_count) as reply_count
+		from board b, 
+		(
+			select p.b_no, count(p.p_no) as post_count, count (r_no) as reply_count
+			from reply r, post p 
+			where p.p_no = r.p_no(+)
+			and r.m_id(+) = #{m_id}
+			and p.m_id = #{m_id}
+			group by p.b_no, p.p_no
+		) res 
+		where b.b_no = res.b_no(+) 
+		and b.b_no not in (100,110)
+		group by b.b_no, b_name
+	</select>
+	
+	<select id="selectAll" resultType="com.hanb.vo.PostVo">
+	SELECT r.* FROM (
+		SELECT r.*, rownum AS rnum FROM (
+			SELECT * FROM post WHERE b_no = #{b_no} ORDER BY p_no DESC
+		) r
+	) r WHERE rnum BETWEEN #{start} AND #{end}
+		
+	</select>
+	
+	<select id="detailPost" resultType="com.hanb.vo.PostVo">
+		select * from post where p_no = #{p_no}
+	</select>
+	
+	<select id="countPost" resultType="int">
+		SELECT count(p_no) FROM post WHERE b_no = #{b_no}
+	</select>
+	
+	<insert id="insertPost">
+		insert into post values (seq_post.nextval, #{p_title},#{p_content}, sysdate, 0, #{b_no}, #{m_id} )
+		<selectKey resultType="int" keyProperty="p_no" order="AFTER">
+			select seq_post.currval from dual
+		</selectKey>
+	</insert>
+	
+	<update id="updatePost">
+		update post set p_title = #{p_title}, p_content = #{p_content} where p_no = #{p_no}
+	</update>
+	
+	<update id="updateHit">
+		update post set p_hit=p_hit+1 where p_no=#{p_no}
+	</update>
+	
+	<delete id="deletePost">
+		delete post where p_no= #{p_no}
+	</delete>
+  
+  	<select id="getSysdate" resultType="java.sql.Date">
+  		select sysdate from dual
+  	</select>
+</mapper>

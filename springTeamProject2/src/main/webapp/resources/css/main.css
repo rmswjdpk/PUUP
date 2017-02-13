@@ -1,0 +1,45 @@
+@CHARSET "UTF-8";
+/* 로그인 로그아웃 회원가입 관련 헤더 */
+.header-right {
+	display: inline-block;
+	float: right;
+	margin-right: 200px;
+	margin-top: 10px;
+	overflow: hidden;
+}
+
+.header-right a {
+	color: white;
+	float: left;
+	display: inline-block;
+	text-align: center;
+}
+
+#header{
+	height: 150px;
+	background-image: url("imageFile/logo.png");
+	position: relative;
+	top: 0px;
+	left: 0px;
+	background-size: cover !important;
+    /*background-position-y: center !important; */
+    /* text-indent: -9999px; */
+}
+#img-logo{
+	position: absolute;
+	width:60%; left:0; right:0; margin-left:auto; margin-right:auto;
+	height:60%; top: 0; bottom:0; margin-top:auto; margin-bottom:auto;
+}
+
+#div-nav{
+	margin-left: 35%;
+}
+
+#memberNav{
+	margin-left: 100px;
+}
+
+.dropdown:hover .dropdown-menu {
+display: block;
+margin-top: 0;
+}

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pupRequest">
+	<insert id="insert">
+		insert into pu_req_post values (seq_post.currval, #{sample_period},#{product_period},#{expection_price},'진행')
+	</insert>
+	
+	<select id="list" resultType="com.hanb.vo.PupRequestVo">
+		select p.p_no,pu_category, p_title, p_regdate, p_hit, p_content, m_id, sample_period, product_period, expection_price from post p, pu_req_post pr where p.p_no=pr.p_no and b_no = 140
+	</select>
+	
+	<select id="getPup" resultType="com.hanb.vo.PupRequestVo">
+		select p.p_no,pu_category, p_title, p_regdate, p_hit, p_content, m_id, sample_period, product_period, expection_price, f_name, f_realname 
+		from post p, pu_req_post pr, files f 
+		where p.p_no = pr.p_no and p.p_no = f.p_no(+) and b_no = 140 and p.p_no(+) = #{p_no} 
+	</select>
+	
+	<update id="updateCategory">
+		update pu_req_post set pu_category='종료' where p_no=#{p_no}
+	</update>
+	
+	<update id="updateDate">
+  		<![CDATA[
+		update (select a.p_no, pu_category, p_title, p_regdate, sample_period, p_hit   
+		from post a, pu_req_post b   
+		where a.p_no=b.p_no  
+		and sample_period <= sysdate)  
+		set pu_category = '종료' 
+		]]> 
+  	</update>
+	
+	<select id="mylist" resultType="com.hanb.vo.PupRequestVo">
+		select p.p_no,pu_category, p_title, p_regdate, p_hit, p_content, m_id, sample_period, product_period, expection_price from post p, pu_req_post pr where p.p_no=pr.p_no and b_no = 140 and m_id=#{m_id}
+	</select>
+</mapper>

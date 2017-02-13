@@ -1,0 +1,126 @@
+@CHARSET "UTF-8";
+
+.div-directors{
+	margin: 0 auto;
+    margin-bottom: 40px;
+    background: url(imageFile/bg_partner.gif) no-repeat center top;
+    text-align: center;
+    background-size: cover;
+    padding: 67px 0 87px 0;
+}
+.div-front{
+	margin: 0 auto;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 60px;
+    text-shadow: 1px 1px 5px #333;
+    color: #fff;
+}
+.dir{
+	font-size: 20px;
+    text-shadow: none;
+}
+.text-content{
+	font-size: 20px;
+	display: block;
+}
+
+.main_tit div{
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.main_tit .tit{
+	padding-top: 10px;
+    padding-bottom: 18px;
+    font-weight: 600;
+    font-size: 30px;
+    color: #000;
+    line-height: 22px;
+}
+
+.main_tit .tits{
+	font-size: 13px;
+	display: block;
+}
+
+.info_list {
+    text-align: center;
+}
+
+.info_list li {
+    position: relative;
+    display: inline-block;
+    width: 320px;
+    margin: 0.4%;
+    margin-bottom: 10px;
+}
+
+.info_box {
+    position: relative;
+}
+
+div {
+    display: block;
+}
+
+.info_list li .img {
+    text-align: center;
+}
+
+.info_list li .img img {
+    width: 285px;
+    height: 230px;
+}
+
+img {
+    max-width: 100%;
+    vertical-align: top;
+}
+
+.info_box .info {
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    min-height: 460px;
+    margin-top: -205px;
+    padding: 30px 20px;
+    padding-top: 215px;
+    background: #eee;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.info_box .info .tit a {
+    font-weight: 600;
+    font-size: 20px;
+    color: #504f5e;
+}
+
+.info_box .info .money a {
+    font-weight: 600;
+    font-size: 30px;
+    color: #504f5e;
+    line-height: 45px;
+}
+
+.info_box .info .comm_desc {
+    margin-top: 10px;
+    font-size: 12px;
+    color: #504f5e;
+    line-height: 16px;
+}
+
+.info_box .btn a {
+    display: block;
+    width: 135px;
+    padding: 5px;
+    border: 3px solid #504f5e;
+    border-radius: 3px;
+    font-weight: 600;
+    font-size: 18px;
+    color: #504f5e;
+    text-align: center;
+    box-sizing: border-box;
+}
+

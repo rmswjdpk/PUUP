@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="file">
+	<insert id="insert">
+		insert into files values(#{f_name},#{f_realname},#{f_savepath},sysdate,null,null)
+	</insert>
+	
+	<delete id="deleteFile" parameterType="map">
+		delete files where ${columnName} = #{value}
+	</delete>
+	
+	<delete id="deleteTmp">
+		delete files 
+		where f_name in
+			<foreach collection="list" item="f" open="(" separator="," close=")">#{f.f_name}</foreach>
+	</delete>
+	
+	<update id="update">
+		update files 
+		<set>
+		<if test="f_savepath != null and f_savepath != '' ">f_savepath = #{f_savepath},</if>
+		<if test="p_no != 0">p_no = #{p_no},</if>
+		</set>
+		<where>f_name = #{f_name}</where>
+	</update>
+	
+	<update id="updateFile">
+		update files 
+		<set>
+		<if test="f_savepath != null and f_savepath != '' ">f_savepath = #{f_savepath},</if>
+		<if test="p_no != 0">p_no = #{p_no},</if>
+		</set>
+		<where>
+		f_name in
+		<foreach collection="list" item="f_name" open="(" separator="," close=")">
+		#{f_name}
+		</foreach>
+		</where>
+	</update>
+	
+	<update id="updateFileP_no">
+		update files set p_no = #{value}, f_savepath = #{savePath} where f_name in
+		<foreach collection="list" item="file" open="(" separator="," close=")">
+		#{file.f_name}
+		</foreach>
+	</update>
+	
+	<update id="updateDR">
+		update files set p_no = seq_post.currval where f_name = #{f_name}
+	</update>
+	<update id="updatePR">
+		update files set r_no = seq_pupReply.currval where f_name = #{f_name}
+	</update>
+	
+	<select id="selectFile" resultType="com.hanb.vo.FileVo">
+		select * from files where f_name = #{f_name}
+	</select>
+	
+	<select id="selectTmp" resultType="com.hanb.vo.FileVo">
+		select f_name, f_savepath from files where to_char(f_regdate + #{save_period},'yyyy/mm/dd') = #{now} and p_no is null and r_no is null
+	</select>
+	
+	<select id="selectFiles" resultType="com.hanb.vo.FileVo">
+		select * from files where ${columnName} in
+		<foreach collection="list" item="item" open="(" separator="," close=")">
+		${item.value}
+		</foreach>
+	</select>
+</mapper>

@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+#div-modal-window{
+	z-index: 99;
+	display: none;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0,0,0,0.4);
+}
+#div-modal-content{
+	background-color: white;
+	padding-top: 10px; 
+	padding-bottom: 40px;
+	padding-left: 20px;
+	padding-right: 20px;
+	width: 400px;
+	height: 300px;
+	margin: 0 auto;
+	margin-top: 100px;
+}

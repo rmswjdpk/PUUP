@@ -1,0 +1,303 @@
+/* 시스템 계정 접속 후 아래 코드 실행할 것*/
+
+create user pup identified by pup;
+grant resource, dba, connect to pup;
+
+conn pup/pup;
+
+create sequence seq_post;
+create sequence seq_pupReply;
+
+/* 회원 */
+CREATE TABLE member (
+	m_id VARCHAR2(50) NOT NULL, /* 아이디 */
+	m_pwd VARCHAR2(72) NOT NULL, /* 비밀번호 */
+	m_name VARCHAR2(50) NOT NULL, /* 이름 */
+	m_tel VARCHAR2(30), /* 전화번호 */
+	m_addr VARCHAR2(255), /* 주소 */
+	m_email VARCHAR2(40) NOT NULL, /* 이메일 */
+	m_regdate DATE, /* 가입일 */
+	m_birth VARCHAR2(10), /* 생년월일 */
+	g_num NUMBER /* 회원등급 */
+);
+
+ALTER TABLE member
+	ADD
+		CONSTRAINT PK_member
+		PRIMARY KEY (
+			m_id
+		);
+
+/* 게시판 */
+CREATE TABLE board (
+	b_no NUMBER NOT NULL, /* 게시판번호 */
+	b_name VARCHAR2(30), /* 게시판이름 */
+	b_regdate DATE /* 생성일 */
+);
+
+ALTER TABLE board
+	ADD
+		CONSTRAINT PK_board
+		PRIMARY KEY (
+			b_no
+		);
+
+/* 게시글 */
+CREATE TABLE post (
+	p_no NUMBER NOT NULL, /* 글번호 */
+	p_title VARCHAR2(250), /* 제목 */
+	p_content VARCHAR2(2500), /* 내용 */
+	p_regdate DATE, /* 등록일 */
+	p_hit NUMBER, /* 조회수 */
+	b_no NUMBER, /* 게시판번호 */
+	m_id VARCHAR2(50) /* 아이디 */
+);
+
+ALTER TABLE post
+	ADD
+		CONSTRAINT PK_post
+		PRIMARY KEY (
+			p_no
+		);
+
+/* 첨부파일 */
+CREATE TABLE files (
+	f_name NUMBER NOT NULL, /* 저장파일이름 */
+	f_realname VARCHAR2(50), /* 원래파일이름 */
+	f_savepath VARCHAR2(250), /* 저장경로 */
+	f_regdate DATE, /* 등록일 */
+	p_no NUMBER, /* 글번호 */
+	r_no NUMBER /* 리플 번호 */
+);
+
+ALTER TABLE files
+	ADD
+		CONSTRAINT PK_files
+		PRIMARY KEY (
+			f_name
+		);
+
+/* 회원등급 */
+CREATE TABLE member_grade (
+	g_num NUMBER NOT NULL, /* 회원등급 */
+	g_title VARCHAR2(20) /* 등급이름 */
+);
+
+ALTER TABLE member_grade
+	ADD
+		CONSTRAINT PK_member_grade
+		PRIMARY KEY (
+			g_num
+		);
+
+/* 디렉터 신청 */
+CREATE TABLE d_req_post (
+	p_no NUMBER NOT NULL, /* 글번호 */
+	due_date DATE, /* 마감기한 */
+	pros NUMBER, /* 찬성 */
+	cons NUMBER, /* 반대 */
+	dir_category VARCHAR2(40) /* 분류 */
+);
+
+ALTER TABLE d_req_post
+	ADD
+		CONSTRAINT PK_d_req_post
+		PRIMARY KEY (
+			p_no
+		);
+
+/* PU 신청 */
+CREATE TABLE pu_req_post (
+	p_no NUMBER NOT NULL, /* 글번호 */
+	sample_period DATE, /* 샘플 기한 */
+	product_period DATE, /* 제작 기한 */
+	expection_price NUMBER, /* 예상 가격 */
+	pu_category VARCHAR2(40) /* 분류 */
+);
+
+ALTER TABLE pu_req_post
+	ADD
+		CONSTRAINT PK_pu_req_post
+		PRIMARY KEY (
+			p_no
+		);
+
+/* 리플 */
+CREATE TABLE reply (
+	r_no NUMBER NOT NULL, /* 리플 번호 */
+	r_content VARCHAR2(1500), /* 리플 내용 */
+	m_id VARCHAR2(50), /* 작성자 */
+	r_regdate DATE, /* 등록일 */
+	p_no NUMBER /* 글번호 */
+);
+
+ALTER TABLE reply
+	ADD
+		CONSTRAINT PK_reply
+		PRIMARY KEY (
+			r_no
+		);
+
+/* 투표 */
+CREATE TABLE vote (
+	p_no NUMBER NOT NULL, /* 글번호 */
+	m_id VARCHAR2(50) NOT NULL /* 아이디 */
+);
+
+ALTER TABLE vote
+	ADD
+		CONSTRAINT PK_vote
+		PRIMARY KEY (
+			p_no,
+			m_id
+		);
+
+/* PU댓글 */
+CREATE TABLE pupreply (
+	r_no NUMBER NOT NULL, /* 리플 번호 */
+	choice VARCHAR2(30) /* 선택 */
+);
+
+ALTER TABLE pupreply
+	ADD
+		CONSTRAINT PK_pupreply
+		PRIMARY KEY (
+			r_no
+		);
+
+/* 문의 */
+CREATE TABLE QandA (
+	p_no NUMBER NOT NULL, /* 글번호 */
+	p_ref NUMBER, /* 참조글번호 */
+	p_deep NUMBER, /* 깊이 */
+	p_step NUMBER /* 단계 */
+);
+
+ALTER TABLE QandA
+	ADD
+		CONSTRAINT PK_QandA
+		PRIMARY KEY (
+			p_no
+		);
+
+ALTER TABLE member
+	ADD
+		CONSTRAINT FK_member_grade_TO_member
+		FOREIGN KEY (
+			g_num
+		)
+		REFERENCES member_grade (
+			g_num
+		);
+
+ALTER TABLE post
+	ADD
+		CONSTRAINT FK_board_TO_post
+		FOREIGN KEY (
+			b_no
+		)
+		REFERENCES board (
+			b_no
+		);
+
+ALTER TABLE files
+	ADD
+		CONSTRAINT FK_post_TO_files
+		FOREIGN KEY (
+			p_no
+		)
+		REFERENCES post (
+			p_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE files
+	ADD
+		CONSTRAINT FK_reply_TO_files
+		FOREIGN KEY (
+			r_no
+		)
+		REFERENCES reply (
+			r_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE d_req_post
+	ADD
+		CONSTRAINT FK_post_TO_d_req_post
+		FOREIGN KEY (
+			p_no
+		)
+		REFERENCES post (
+			p_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE pu_req_post
+	ADD
+		CONSTRAINT FK_post_TO_pu_req_post
+		FOREIGN KEY (
+			p_no
+		)
+		REFERENCES post (
+			p_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE reply
+	ADD
+		CONSTRAINT FK_post_TO_reply
+		FOREIGN KEY (
+			p_no
+		)
+		REFERENCES post (
+			p_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE vote
+	ADD
+		CONSTRAINT FK_d_req_post_TO_vote
+		FOREIGN KEY (
+			p_no
+		)
+		REFERENCES d_req_post (
+			p_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE pupreply
+	ADD
+		CONSTRAINT FK_reply_TO_pupreply
+		FOREIGN KEY (
+			r_no
+		)
+		REFERENCES reply (
+			r_no
+		)
+		ON DELETE CASCADE;
+
+ALTER TABLE QandA
+	ADD
+		CONSTRAINT FK_post_TO_QandA
+		FOREIGN KEY (
+			p_no
+		)
+		REFERENCES post (
+			p_no
+		)
+		ON DELETE CASCADE;
+
+INSERT INTO member_grade VALUES(10,'미인증 회원');
+INSERT INTO member_grade VALUES(20,'일반');
+INSERT INTO member_grade VALUES(30,'디렉터');
+INSERT INTO member_grade VALUES(40,'관리자');
+
+INSERT INTO board VALUES(100,'공지사항',sysdate);
+INSERT INTO board VALUES(110,'문의사항',sysdate);
+INSERT INTO board VALUES(120,'자유게시판',sysdate);
+INSERT INTO board VALUES(130,'공유게시판',sysdate);
+INSERT INTO board VALUES(140,'PUP게시판',sysdate);
+INSERT INTO board VALUES(150,'디렉터신청게시판',sysdate);
+
+COMMIT;

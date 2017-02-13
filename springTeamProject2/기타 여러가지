@@ -1,0 +1,80 @@
+리플 시스템 사용하기
+
+
+<!-- 리플 시스템 -->
+<!-- 작성된 리플들은 보여주는 리플 컨테이너 -->
+<div id="div-replyContainer" class="table">
+	<c:forEach items="${rlist }" var="r">
+		<div id="${r.r_no }" class="div-reply">
+			<p>글쓴이 : ${r.m_id } <span class="regdate">(${r.r_regdate })</span></p>
+			<div>${r.r_content }</div>
+			<c:if test="${lm.m_id.equals(r.m_id) }">
+			<button type="button" class="btn_delete" value="${r.r_no }">삭제</button>
+			</c:if>
+			<hr>
+		</div>
+	</c:forEach>
+	<br>
+	<!-- 리플 작성하는 Form -->
+	<form action="insertReply.do" method="post" id="form_reply">
+		<input type="hidden" id="m_id" name="m_id" value="${lm.m_id }">
+		<input type="hidden" id="p_no" name="p_no" value="${p.p_no }">
+		<textarea rows="5" cols="60" name="r_content"></textarea>
+		<input type="button" value="등록" id="btn_insert" style="display: inline-block;">
+	</form>
+</div>
+<!-- 리플 시스템 끝 -->
+
+
+
+
+//ckediter
+
+<script type="text/javascript" src="./resources/ckeditor/ckeditor.js"></script>
+
+textarea 에 class를 ckeditor
+
+//파일 수정 
+<script type="text/javascript" src="./resources/js/post/updatePost.js"></script>
+
+<c:forEach var="f" items="${files }">
+		<tr id="${f.f_name }" class="tr-uploadFiles">
+		<td>업로드 파일 : ${f.f_realname }</td>
+		<td><button type="button" value="${f.f_name }" class="btn_delete btn btn-default">삭제</button></td>
+		</tr>
+		</c:forEach>
+
+// 파일 업로드
+1. 
+head 에
+
+<script type="text/javascript" src="./resources/js/uploadFile.js"></script>
+
+를 쓴다.
+
+2. 
+form 필드 안에 
+
+<input type="file" id="input-file" style="display: none;">
+<br>
+<button id="btn-uploadFile" type="button" value="3">파일첨부</button>
+<button id="btn-uploadImgFile" type="button" value="3">이미지 파일첨부</button>
+<div id="div-uploadFiles"></div>
+
+버튼 둘중 하나 택1 하거나 둘다 쓰거나 맘대로
+
+를 써 넣는다.
+
+button value 값으로 3이 지정되어 있는데 여기에 적은 숫자만큼 파일업로드를 제한시킬 수 있다.
+
+3. 
+
+내가 요청한 controller에  String 변수 f_name 으로 값이 전달된다. 여러개면 f_name,f_name,f_name 이런식으로 감
+
+FiieDao 에 moveFile 이라는 메소드를 이용한다.
+
+//
+
+// 파일 다운로드 
+
+<a href='downloadFile.do?f_name=변수명'></a> 를 쓴다

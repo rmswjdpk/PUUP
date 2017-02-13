@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="QandA">
+	<select id="selectOneQandA" resultType="map">
+		SELECT * FROM qanda WHERE p_no = #{p_no}
+	</select>
+	
+	<select id="selectAll" resultType="map">
+	SELECT r.* FROM (
+		SELECT r.*, rownum AS rnum FROM (
+			SELECT p.p_no, p_title, p_content, p_regdate, p_hit, b_no, m_id, p_ref, p_deep, p_step
+			FROM post p, QandA q WHERE p.p_no = q.p_no AND b_no = #{b_no} ORDER BY p_ref DESC, p_step
+		) r
+	) r WHERE rnum BETWEEN #{start} AND #{end}
+	</select>
+	
+	<insert id="insertQandA">
+		INSERT INTO qanda VALUES(#{p_no},#{p_ref},#{p_deep},#{p_step})
+	</insert>
+	
+	<update id="updateStepQandA">
+		UPDATE qanda SET p_step = p_step + 1 WHERE p_ref = #{p_ref} AND p_step > #{p_step}
+	</update>
+</mapper>

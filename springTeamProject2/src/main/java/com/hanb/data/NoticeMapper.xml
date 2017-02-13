@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="board">
+<insert id="insertNotice">
+	insert into post values(seq_post.nextval, #{p_title}, #{p_content},
+	sysdate, 0, null, 100, #{m_id} )  
+</insert>
+
+<select id="getNotice" resultType="com.hanb.vo.PostVo">
+	select p.p_no, p_title, p_regdate, p_content from post p, board b where p.b_no=b.b_no and b.b_no=100 and p.p_no=#{p_no} 
+</select>
+
+
+
+<update id="updateNotice" parameterType="com.hanb.vo.PostVo">
+	update post set p_title = #{p_title}, p_content=#{p_content}, p_regdate=sysdate, p_hit=0, ip_addr = #{ip_addr} where b_no=100 and p_no= #{p_no}
+</update>
+
+<delete id="deleteNotice">
+	delete post where b_no=100 and p_no= #{p_no}
+</delete>
+
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="R">
+
+	<select id="selectMemberContractReport" resultType="map">
+	SELECT r.*, r2.* FROM 
+	(SELECT COUNT(*) as success FROM reply r, pupreply pr 
+	WHERE r.r_no = pr.r_no AND choice = '완료' AND m_id = #{m_id}) r,
+	(SELECT COUNT(*) as fail FROM reply r, pupreply pr 
+	WHERE r.r_no = pr.r_no AND choice = '종료' AND m_id = #{m_id}) r2
+	</select>
+	
+	<select id="selectMonthsReport" resultType="map">
+	SELECT 
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '01') AS "1월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '02') AS "2월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '03') AS "3월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '04') AS "4월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '05') AS "5월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '06') AS "6월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '07') AS "7월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '08') AS "8월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '09') AS "9월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '10') AS "10월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '11') AS "11월",
+	(SELECT COUNT(*) FROM pupreply pr, reply r 
+	WHERE pr.r_no = r.r_no AND choice = '완료'
+	AND TO_CHAR(r_regdate,'mm') = '12') AS "12월"
+	FROM DUAL
+	</select>
+	
+	<select id="getAgeList" resultType="map">
+		select substr(m_birth,1,1) birth, count(*) sum from post p, member m
+		where m.m_id=p.m_id and
+		b_no = 140
+		group by substr(m_birth,1,1)
+	</select>
+	<select id="getAvgDate" resultType="map">
+		select round(avg(sample_period-p_regdate),0) sample, round(avg(product_period-p_regdate),0) product 
+		 from pu_req_post pu, post p
+		 where pu.p_no=p.p_no
+	</select>
+	<select id="getWordCloud" resultType="map">
+		select p_title,p_content from post where b_no= #{b_no}
+	</select>
+</mapper>

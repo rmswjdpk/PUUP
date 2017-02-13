@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pupReply">
+	<insert id="insertReply">
+		insert into reply values (seq_pupReply.nextval, #{r_content}, #{m_id}, sysdate, #{p_no})
+	</insert>
+	<insert id="insertChoice">
+		insert into pupreply values (seq_pupReply.currval, '진행')
+	</insert>
+	<insert id="insertProductChoice">
+		insert into pupreply values (seq_pupReply.currval, '완료')
+	</insert>
+	<select id="list" resultType="map">
+		select r.r_no, r_content, r.m_id, to_char(r_regdate,'yyyy/mm/dd/hh24:mi:ss') as r_regdate, f_name, f_realname, choice
+		from reply r, files f, pupreply pr
+		where r.r_no=f.r_no 
+		and r.r_no = pr.r_no
+		and f.p_no is null
+		and r.p_no = #{p_no}
+	</select>
+	<update id="complete">
+		update pupreply set choice='종료' where r_no in 
+		(select r_no from reply where p_no=#{p_no})
+	</update>
+	<update id="updateChoice">
+		update pupreply set choice='채택' where r_no=#{r_no}
+	</update>
+</mapper>

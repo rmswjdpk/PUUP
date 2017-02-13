@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">
+	
+  <select id="grade" resultType="map">
+  	select * from member_grade
+  </select>
+  
+  <select id="checkIdEmail" resultType="int">
+  	select count(m_id) from member where m_id = #{m_id} and m_email = #{m_email}
+  </select>
+  
+  <select id="checkValue" resultType="int" parameterType="com.hanb.vo.SearchVo">
+    select count(m_id) from member where ${keyField} = #{keyWord}
+  </select>
+  
+  <select id="getPwd" resultType="String">
+  	select m_pwd from member where m_id = #{m_id}
+  </select>
+  
+  <select id="login" resultType="com.hanb.vo.LoginMemberVo">
+  	select m_id, m.g_num, g_title from member m, member_grade mg where m.g_num = mg.g_num and m_id = #{m_id}
+  </select>
+  
+  <select id="selectMemberId" resultType="String">
+  	select m_id from member where m_email = #{m_email}
+  </select>
+  
+  <select id="selectMember" resultType="com.hanb.vo.MemberVo">
+  	select m_id, m_name, m_tel, m_addr, m_email, m_regdate, m.g_num, g_title 
+  	from member m, member_grade mg 
+  	where m.g_num = mg.g_num and m_id = #{m_id}
+  </select>
+  
+  <select id="selectAll" resultType="map">
+  	select m_id, m_name, m_tel, m_addr, m_email, m_regdate, m.g_num, g_title 
+  	from member m, member_grade mg 
+  	<where>
+ 	m.g_num = mg.g_num
+ 	<if test="startDate != null and startDate != '' ">
+ 	and	m_regdate between #{startDate} and to_date(#{endDate},'yyyy/mm/dd')+0.99999
+ 	</if>
+ 	<if test="keyWord != null and keyWord != '' ">
+ 	and	${keyField} like '%${keyWord}%'
+ 	</if>
+  	</where>
+  </select>
+  
+  <select id="selectCount" resultType="int">
+  	select count(m_id) from member
+  	<if test="keyWord != null and keyWord != '' ">
+	  	<where>
+	  		${keyField} = #{keyWord}
+	  	</where>
+  	</if>
+  </select>
+  
+  <select id="selectMonthNewMember" resultType="map">
+	select to_char(m_regdate,'mm') as month, count(m_id) as cnt_member
+	from member where to_char(m_regdate,'mm') in (#{todayMonth} - 1, #{todayMonth}) 
+	group by to_char(m_regdate,'mm')
+  </select>
+  
+  <select id="selectMemberCount" resultType="map">
+	select m.g_num, g_title, count(m_id) as cnt_member from member m, member_grade mg 
+	where m.g_num(+) = mg.g_num
+	group by m.g_num, g_title
+  </select>
+  
+  <update id="updateMember">
+  	update member 
+  	<set>
+  	<if test="m_name != null and m_name != '' ">m_name = #{m_name},</if>
+  	<if test="m_pwd != null and m_pwd != '' ">m_pwd = #{m_pwd},</if>
+  	<if test="m_tel != null and m_tel != '' ">m_tel = #{m_tel},</if>
+  	<if test="m_addr != null and m_addr != '' ">m_addr = #{m_addr},</if>
+  	<if test="m_email != null and m_email != '' ">m_email = #{m_email},</if>
+  	<if test="g_num != 0">g_num = #{g_num},</if>
+  	</set>
+  	<where>
+  	m_id = #{m_id}
+  	</where>
+  </update>
+  
+  
+  <insert id="insertMember">
+  	insert into member values(#{m_id},#{m_pwd},#{m_name},#{m_tel},#{m_addr},#{m_email},sysdate,#{m_birth},10)
+  </insert>
+  
+  <delete id="deleteMember">
+  	delete member where m_id = #{m_id}
+  </delete>
+</mapper>
+
+
+
+
+
+
+
+
+

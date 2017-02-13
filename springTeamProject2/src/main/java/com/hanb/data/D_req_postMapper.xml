@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="d_req_post">
+	<insert id="insert">
+		insert into d_req_post values (seq_post.currval, (sysdate+5),0,0,'진행중')
+	</insert>
+	<select id="selectAll" resultType="hashmap">
+		select p.p_no, p_title,dir_category, p_regdate,due_date, p_hit,pros,cons from post p, d_req_post dr where p.p_no=dr.p_no and b_no=150
+	</select>
+	<select id="mySelectAll" resultType="hashmap" parameterType="String">
+		select p.p_no, p_title,dir_category, p_regdate,due_date, p_hit,pros,cons from post p, d_req_post dr where p.p_no=dr.p_no and m_id=#{m_id} and b_no=150 
+	</select>
+	<select id="getDir" resultType="hashmap">
+		select p.p_no,p_title,dir_category, p_regdate, due_date, p_hit, pros, cons, m_id,p_content  from post p, d_req_post dr where p.p_no=dr.p_no and b_no=150 and p.p_no=#{p_no}
+	</select>
+  	<insert id="vote" parameterType="hashmap">
+  		insert into vote values (#{p_no},#{m_id})
+  	</insert>
+  	<update id="updateVote" parameterType="hashmap">
+  		update d_req_post set  
+  		<if test="vote==1">
+  			pros = (pros+1)	
+  		</if>
+  		<if test="vote==-1">
+  			cons = (cons+1)
+  		</if>
+  		 where p_no=#{p_no}
+  	</update>
+  	<update id="updateGrade">
+  		<![CDATA[
+  		update member set g_num=30 
+  		where m_id in (select d.m_id from post a, d_req_post b, member d 
+  		where a.p_no=b.p_no 
+  		and dir_category = '진행중' 
+		and a.m_id=d.m_id
+  		and NVL(pros/DECODE((pros+cons), 0, NULL, (pros+cons)), 0)>=0.7 
+  		and (pros+cons)>=#{dIR_RESTRICT} 
+  		and due_date <= sysdate)
+  		]]> 
+  	</update>
+  	
+  	<update id="updateDate">
+  		<![CDATA[
+		update (select a.p_no, dir_category, p_title, p_regdate, due_date, p_hit, pros, cons  
+		from post a, d_req_post b   
+		where a.p_no=b.p_no  
+		and due_date <= sysdate)  
+		set dir_category = '평가완료' 
+		]]> 
+  	</update>
+</mapper>
